@@ -1,10 +1,12 @@
-import {Shape, ShapeGeometry, MeshBasicMaterial, Mesh, Color, Object3D, Group, Plane, PlaneGeometry, DoubleSide, TextureLoader, Vector3} from "three";
+import {Shape, ShapeGeometry, MeshBasicMaterial, Mesh, Color, Object3D, Group, Plane, PlaneGeometry, DoubleSide, TextureLoader, Vector3, CanvasTexture} from "three";
 import {type CubeElement} from "./cubeData";
 
 const textureLoader = new TextureLoader();
 
 
 export const createSquare = (color: Color, element: CubeElement) => {
+    console.log(1231231);
+    console.log(JSON.parse(JSON.stringify(element)));
     const squareShape = new Shape();
     const x = 0, y = 0;
     // top
@@ -47,7 +49,7 @@ export const createSquare = (color: Color, element: CubeElement) => {
     square.position.set(posX, posY, posZ);
 
     if (element.showCode) {
-        // 1. 创建 Canvas
+        // // 1. 创建 Canvas
         const canvas = document.createElement('canvas');
         canvas.width = 256;
         canvas.height = 256;
@@ -63,19 +65,30 @@ export const createSquare = (color: Color, element: CubeElement) => {
         ctx.textBaseline = 'middle';
         ctx.fillText(element.code || '', canvas.width / 2, canvas.height / 2);
         
-        // 4. 创建纹理
-        const texture = new TextureLoader().load(canvas.toDataURL());
+        // // 4. 创建纹理
+        // const texture = new TextureLoader().load(canvas.toDataURL());
         
-        // 5. 创建平面并贴纹理
+        // // 5. 创建平面并贴纹理
+        // const geo2 = new PlaneGeometry(1, 1);
+        // const mat3 = new MeshBasicMaterial({
+        //     map: texture,
+        //     transparent: true
+        // });
+        // const textPlane = new Mesh(geo2, mat3);
+        // textPlane.position.set(0, 0, 0.01); // 略微靠前，防止 z-fighting
+        // textPlane.scale.set(0.8, 0.8, 0.8);
+
+        // square.add(textPlane);
+
+        const canvasTexture = new CanvasTexture(canvas);
         const geo2 = new PlaneGeometry(1, 1);
         const mat3 = new MeshBasicMaterial({
-            map: texture,
+            map: canvasTexture,
             transparent: true
         });
         const textPlane = new Mesh(geo2, mat3);
-        textPlane.position.set(0, 0, 0.01); // 略微靠前，防止 z-fighting
+        textPlane.position.set(0, 0, 0.01);
         textPlane.scale.set(0.8, 0.8, 0.8);
-
         square.add(textPlane);
     }
 

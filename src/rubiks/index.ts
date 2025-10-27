@@ -70,7 +70,7 @@ class Rubiks {
      */
     public disorder() {
         if (this.cube) {
-
+            // TODO
         }
     }
 

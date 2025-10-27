@@ -86,6 +86,7 @@ abstract class Control {
         this.start = true;
         this.startPos = new Vector2()
         const intersect = this.getIntersects(offsetX, offsetY);
+        console.log(intersect);
 
         this._square = null;
         if (intersect) {
@@ -98,10 +99,12 @@ abstract class Control {
 
     protected operateDrag(offsetX: number, offsetY: number, movementX: number, movementY: number) {
         if (this.start && this.lastOperateUnfinish === false) {
-            if (this._square) {
-                const curMousePos = new Vector2(offsetX, offsetY);
-                this.cube.rotateOnePlane(this.startPos, curMousePos, this._square, this.camera, {w: this.domElement.clientWidth, h: this.domElement.clientHeight});
-            } else {
+            // if (this._square) {
+            //     const curMousePos = new Vector2(offsetX, offsetY);
+            //     this.cube.rotateOnePlane(this.startPos, curMousePos, this._square, this.camera, {w: this.domElement.clientWidth, h: this.domElement.clientHeight});
+            // } 
+            // else 
+            {
                 const dx = movementX;
                 const dy = -movementY;
 
@@ -143,6 +146,7 @@ abstract class Control {
             }
             this.start = false;
             this._square = null;
+            // rotateAroundWorldAxis(this.cube, new Vector3(rotateDir.x, rotateDir.y, 0), rotateAngle);
         }
     }
 }
@@ -161,6 +165,7 @@ export class MouseControl extends Control {
 
     public mousedownHandle(event: MouseEvent) {
         event.preventDefault();
+        console.log("mousedownHandle");
 
         this.operateStart(event.offsetX, event.offsetY);
     }

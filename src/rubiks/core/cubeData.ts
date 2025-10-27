@@ -65,7 +65,7 @@ class CubeData {
                     color: this.colors[0],
                     pos: new Vector3(x, border + this._size * 0.5, z),
                     normal: new Vector3(0, 1, 0),
-                    code: cubeCode['u'][idx++],
+                    code: cubeCode['u'][idx],
                     showCode: true
                 });
                 
@@ -76,41 +76,53 @@ class CubeData {
                     code: cubeCode['d'][idx],
                     showCode: true
                 });
+                idx++;
             }
         }
 
         // left and right
+        idx = 0;
         for (let y = -border; y <= border; y++) {
             for (let z = -border; z <= border; z++) {
                 this.elements.push({
                     color: this.colors[2],
                     pos: new Vector3(-border - this._size * 0.5, y, z),
                     normal: new Vector3(-1, 0, 0),
+                    code: cubeCode['l'][idx],
+                    showCode: true
                 });
 
                 this.elements.push({
                     color: this.colors[3],
                     pos: new Vector3(border + this._size * 0.5, y, z),
-                    normal: new Vector3(1, 0, 0)
+                    normal: new Vector3(1, 0, 0),
+                    code: cubeCode['r'][idx],
+                    showCode: true
                 });
+                idx++;
             }
         }
 
         // front and back
+        idx = 0;
         for (let x = -border; x <= border; x++) {
             for (let y = -border; y <= border; y++) {
                 this.elements.push({
                     color: this.colors[4],
                     pos: new Vector3(x, y, border + this._size * 0.5),
                     normal: new Vector3(0, 0, 1),
-                    withLogo: x === 0 && y === 0
+                    code: cubeCode['f'][idx],
+                    showCode: true
                 });
 
                 this.elements.push({
                     color: this.colors[5],
                     pos: new Vector3(x, y, -border - this._size * 0.5),
-                    normal: new Vector3(0, 0, -1)
+                    normal: new Vector3(0, 0, -1),
+                    code: cubeCode['b'][idx],
+                    showCode: true
                 });
+                idx++;
             }
         }
 
