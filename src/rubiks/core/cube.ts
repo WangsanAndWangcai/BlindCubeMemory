@@ -5,6 +5,7 @@ import {ndcToScreen} from "../util/transform";
 import CubeData, {type CubeElement} from "./cubeData";
 import CubeState, {type RotateDirection} from "./cubeState";
 import {createSquare, SquareMesh} from "./square";
+import { generateScramble } from "./shuffle";
 
 enum FaceType {
     Up = 'U',
@@ -60,8 +61,8 @@ export class Cube extends Group {
 
         this.createChildrenByData();
 
-        this.rotateX(Math.PI * 0.25);
-        this.rotateY(Math.PI * 0.25);
+        // this.rotateX(Math.PI * 0.25);
+        // this.rotateY(Math.PI * 0.25);
         setFinish(this.finish);
     }
 
@@ -362,41 +363,105 @@ export class Cube extends Group {
     /**
      * 打乱
      */
-    public disorder() {
+    public async disorder(scene, render, camera) {
+        const scramble = generateScramble(); // 生成打乱公式数组，例如 ["R", "U2", "F'", "D'", ...]
+        console.log("Scramble:", scramble.join(" "));
 
+        // 辅助函数：解析单个公式
+        const parseMove = (move: string) => {
+            let axis: Vector3;
+            let layerFilter: (square: SquareMesh) => boolean;
+            const order = this.order;
+            const layerOffset = (order - 1) / 2;
+            const size = this.squareSize;
+            const epsilon = 0.1;
+
+            switch (move[0]) {
+                case "R":
+                    axis = new Vector3(1, 0, 0);
+                    layerFilter = s => Math.abs(s.element.pos.x - layerOffset * size) < epsilon;
+                    break;
+                case "L":
+                    axis = new Vector3(-1, 0, 0);
+                    layerFilter = s => Math.abs(s.element.pos.x + layerOffset * size) < epsilon;
+                    break;
+                case "U":
+                    axis = new Vector3(0, 1, 0);
+                    layerFilter = s => Math.abs(s.element.pos.y - layerOffset * size) < epsilon;
+                    break;
+                case "D":
+                    axis = new Vector3(0, -1, 0);
+                    layerFilter = s => Math.abs(s.element.pos.y + layerOffset * size) < epsilon;
+                    break;
+                case "F":
+                    axis = new Vector3(0, 0, 1);
+                    layerFilter = s => Math.abs(s.element.pos.z - layerOffset * size) < epsilon;
+                    break;
+                case "B":
+                    axis = new Vector3(0, 0, -1);
+                    layerFilter = s => Math.abs(s.element.pos.z + layerOffset * size) < epsilon;
+                    break;
+                default:
+                    return null;
+            }
+
+            let turns = 1;
+            if (move.includes("2")) turns = 2;
+            if (move.includes("'")) turns = -1 * turns;
+
+            return { axis, layerFilter, turns };
+        };
+
+        // 动画单步执行
+        const rotateOneMove = async (axis: Vector3, layerFilter: (s: SquareMesh) => boolean, turns: number) => {
+            const squares = this.squares.filter(layerFilter);
+            console.log('squares', squares);
+            const angleStep = -(Math.PI / 2) * Math.sign(turns);
+            const rotateMat = new Matrix4();
+            rotateMat.makeRotationAxis(axis, angleStep);
+
+            const duration = 200; // 每步动画时长(ms)
+            const stepDelay = 16; // 每帧约 60fps
+            const steps = Math.floor(duration / stepDelay);
+            const anglePerStep = angleStep / steps;
+
+            for (let i = 0; i < steps; i++) {
+                const rotateMat = new Matrix4().makeRotationAxis(axis, anglePerStep);
+                for (const s of squares) {
+                    s.applyMatrix4(rotateMat);
+                    s.updateMatrix();
+                }
+            }
+            render.render(scene, camera);
+            await new Promise(r => requestAnimationFrame(r));
+        };
+
+        const steps = ['R', 'U'];
+
+        for (const move of steps) {
+            const parsed = parseMove(move);
+            const { axis, layerFilter, turns } = parsed;
+            await rotateOneMove(axis, layerFilter, turns);
+        }
+        
+
+        // 逐步执行打乱
+        // for (const move of scramble) {
+        //     const parsed = parseMove(move);
+        //     if (!parsed) continue;
+
+        //     const { axis, layerFilter, turns } = parsed;
+        //     await rotateOneMove(axis, layerFilter, turns);
+        // }
+
+        this.data.saveDataToLocal();
+        setFinish(this.finish);
+        console.log("打乱完成 ✅");
     }
 
-    /**
-     * 
-     */
     public getFaces(face: FaceType) {
-        // 根据 face 返回属于该面的所有 SquareMesh。face 为 'U','D','L','R','F','B'
-        let targetNor;
-        switch (face) {
-            case FaceType.Up:
-                targetNor = new Vector3(0, 1, 0);
-                break;
-            case FaceType.Down:
-                targetNor = new Vector3(0, -1, 0);
-                break;
-            case FaceType.Left:
-                targetNor = new Vector3(-1, 0, 0);
-                break;
-            case FaceType.Right:
-                targetNor = new Vector3(1, 0, 0);
-                break;
-            case FaceType.Front:
-                targetNor = new Vector3(0, 0, 1);
-                break;
-            case FaceType.Back:
-                targetNor = new Vector3(0, 0, -1);
-                break;
-            default:
-                return [] as any;
-        }
-
-        // 只匹配与目标法向量一致的 squares
-        return this.squares.filter((square) => square.element.normal.equals(targetNor));
+        console.log(this.squares);
+        return this.squares.filter(v=>v.element.locationCode.includes(face.toLowerCase()));
     }
 
     public restore() {

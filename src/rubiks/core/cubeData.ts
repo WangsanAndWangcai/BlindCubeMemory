@@ -1,5 +1,5 @@
 import {Vector3} from "three";
-import { cubeCode } from "./cubeCode";
+import { cubeCode, cubeLocationCode } from "./cubeCode";
 
 type ColorRepresentation = string | number;
 
@@ -10,6 +10,7 @@ export interface CubeElement {
     withLogo?: boolean;
     showCode?: boolean;
     code?: string;
+    locationCode: string;
 }
 
 type CubeColor = [ColorRepresentation, ColorRepresentation, ColorRepresentation, ColorRepresentation, ColorRepresentation, ColorRepresentation];
@@ -28,7 +29,7 @@ class CubeData {
         return this._size;
     }
     public elements: CubeElement[] = [];
-    public constructor(cubeOrder = 3, colors: CubeColor = ["#ffff00", "#ffffff", "#ff0000", "#ffaa00", "#00dd00", "#0000ff"]) {
+    public constructor(cubeOrder = 3, colors: CubeColor = ["#ffff00", "#ffffff", "#0000ff", "#00dd00", "#ff0000", "#ffaa00"]) {
         this.cubeOrder = cubeOrder;
         this.colors = colors;
         this.initElements();
@@ -66,6 +67,7 @@ class CubeData {
                     pos: new Vector3(x, border + this._size * 0.5, z),
                     normal: new Vector3(0, 1, 0),
                     code: cubeCode['u'][idx],
+                    locationCode:cubeLocationCode['u'][idx],
                     showCode: true
                 });
                 
@@ -74,6 +76,7 @@ class CubeData {
                     pos: new Vector3(x, -border - this._size * 0.5, z),
                     normal: new Vector3(0, -1, 0),
                     code: cubeCode['d'][idx],
+                    locationCode: cubeLocationCode['d'][idx],
                     showCode: true
                 });
                 idx++;
@@ -89,6 +92,7 @@ class CubeData {
                     pos: new Vector3(-border - this._size * 0.5, y, z),
                     normal: new Vector3(-1, 0, 0),
                     code: cubeCode['l'][idx],
+                    locationCode: cubeLocationCode['l'][idx],
                     showCode: true
                 });
 
@@ -97,6 +101,7 @@ class CubeData {
                     pos: new Vector3(border + this._size * 0.5, y, z),
                     normal: new Vector3(1, 0, 0),
                     code: cubeCode['r'][idx],
+                    locationCode: cubeLocationCode['r'][idx],
                     showCode: true
                 });
                 idx++;
@@ -112,6 +117,7 @@ class CubeData {
                     pos: new Vector3(x, y, border + this._size * 0.5),
                     normal: new Vector3(0, 0, 1),
                     code: cubeCode['f'][idx],
+                    locationCode: cubeLocationCode['f'][idx],
                     showCode: true
                 });
 
@@ -120,6 +126,7 @@ class CubeData {
                     pos: new Vector3(x, y, -border - this._size * 0.5),
                     normal: new Vector3(0, 0, -1),
                     code: cubeCode['b'][idx],
+                    locationCode: cubeLocationCode['b'][idx],
                     showCode: true
                 });
                 idx++;

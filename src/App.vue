@@ -22,12 +22,18 @@
       <div>R8</div>
       <div>R9</div>
     </div>
+
+    <div class="start-button" @click="handleShuffle">Start</div>
   </div>
+  <!-- <Test/> -->
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import Rubiks from './rubiks';
+import Test from './threeTest/Test.vue';
+
+let rubik: undefined | Rubiks = undefined;
 
 const CornerKey = ref([
   'A','B','C',
@@ -40,24 +46,27 @@ const CornerKey = ref([
   'X','Y','Z',
 ])
 
+function handleShuffle() {
+  console.log('btn', rubik);
+  if (rubik) {
+    rubik.disorder();
+  }
+}
+
 onMounted(() => {
   const container = document.getElementById("container");
   const orderChangeEle = document.getElementById("order-select") as HTMLSelectElement;
-  const disorderEle = document.getElementById("disorder") as HTMLButtonElement;
+  
   const restore = document.getElementById("restore") as HTMLButtonElement;
   console.log(container);
   if (container) {
-    const rubiks = new Rubiks(container);
+    rubik = new Rubiks(container);
 
     // orderChangeEle.addEventListener("change", (event) => {
     //   const value = (event.target! as HTMLSelectElement).value;
 
     //   rubiks.setOrder(parseInt(value));
     // })
-
-    disorderEle.addEventListener("click", () => {
-      rubiks.disorder();
-    });
 
     // restore.addEventListener("click", () => {
     //   const ok = window.confirm("还原后，不可恢复哦！");
@@ -112,6 +121,17 @@ onMounted(() => {
         margin: auto;
       }
     }
+  }
+
+  .start-button {
+    position: absolute;
+    bottom: 50px;
+    left: 40%;
+    right: 40%;
+    background-color: gray;
+    width: 50;
+    height: 50;
+    border: 1px solid red;
   }
 
   .input-code-container {

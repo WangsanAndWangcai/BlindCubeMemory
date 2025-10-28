@@ -18,3 +18,75 @@ export const cubeCode = {
         'd1', 'd2', 'd3', 'd4', 'd5', 'd6', 'd7', 'd8', 'd9'
     ]
 }
+
+export const cubeLocationCode = {
+    'u': [
+        'ulb', 'ulm', 'ulf', 'umb', 'u', 'umf', 'urb', 'urm', 'urf'
+    ],
+    'd': [
+        'dlb', 'dlm', 'dlf', 'dmb', 'd', 'dmf', 'drb', 'drm', 'drf'
+    ],
+    'l': [
+        'ldb', 'ldm', 'ldf', 'lmb', 'l', 'lmf', 'lub', 'lum', 'luf'
+    ],
+    'r': [
+        'rdb', 'rdm', 'rdf', 'rmb', 'r', 'rmf', 'rub', 'rum', 'ruf'
+    ],
+    'f': [
+        'fld', 'flm', 'flu', 'fmd', 'f', 'fmu', 'frd', 'frm', 'fru'
+    ],
+    'b': [
+        'bld', 'blm', 'blu', 'bmd', 'b', 'bmu', 'brd', 'brm', 'bru'
+    ]
+}
+
+export const cubeRotateCode = {
+    'U': {
+        'u': 'u',
+        'd': 'd',
+        'l': 'b',
+        'b': 'r',
+        'r': 'f',
+        'f': 'l'
+    },
+    'D': {
+        'u': 'u',
+        'd': 'd',
+        'l': 'f',
+        'f': 'r',
+        'r': 'b',
+        'b': 'l',
+    },
+    'L': {
+        'u': 'f',
+        'd': 'b',
+        'l': 'l',
+        'r': 'r',
+        'f': 'd',
+        'b': 'u',
+    },
+    'R': {
+        'u': 'b',
+        'd': 'f',
+        'l': 'l',
+        'r': 'r',
+        'f': 'u',
+        'b': 'd',
+    },
+    'F': {
+        'u': 'r',
+        'r': 'd',
+        'd': 'l',
+        'l': 'u',
+        'f': 'f',
+        'b': 'b',
+    },
+    'B': {
+        'u': 'l',
+        'l': 'd',
+        'd': 'r',
+        'r': 'u',
+        'f': 'f',
+        'b': 'b',
+    }
+};

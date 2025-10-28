@@ -1,10 +1,12 @@
-import {PerspectiveCamera, Scene, WebGLRenderer} from "three";
+import {AxesHelper, PerspectiveCamera, Scene, WebGLRenderer} from "three";
 import createCamera from "./components/camera";
 import createScene from "./components/scene";
 import createRenderer from "./components/renderer";
 import {Cube} from "./core/cube";
 import Control, {MouseControl, TouchControl} from "./core/control";
 import PresetControls from "./core/presetControls";
+import { OrbitControls } from "three/examples/jsm/Addons.js";
+import { generateScramble } from "./core/shuffle";
 
 const setSize = (container: Element, camera: PerspectiveCamera, renderer: WebGLRenderer) => {
     // Set the camera's aspect ratio
@@ -25,12 +27,20 @@ class Rubiks {
     private renderer: WebGLRenderer;
     private _controls: Control[] = [];
     private presetControls: PresetControls;
+    private controls: OrbitControls;
+
     public constructor(container: Element) {
         this.camera = createCamera();
         this.scene = createScene("#eeffcc");
         this.renderer = createRenderer();
         container.appendChild(this.renderer.domElement);
 
+        // 🎯 添加 OrbitControls 控制器
+        this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+        this.controls.enableDamping = true; // 惯性阻尼感
+        this.controls.dampingFactor = 0.05;
+        this.controls.enableZoom = true;    // 启用缩放
+        this.controls.enablePan = true;     // 启用平移
         // auto resize
         window.addEventListener("resize", () => {
             setSize(container, this.camera, this.renderer);
@@ -38,7 +48,8 @@ class Rubiks {
         });
         setSize(container, this.camera, this.renderer);
         this.setOrder(3);
-        this.presetControls.rotateCube('U')
+        // this.presetControls.rotateCube('F')
+        this.render();
         // this.startAnimation();
     }
 
@@ -50,6 +61,8 @@ class Rubiks {
 
         const cube = new Cube(order);
         this.scene.add(cube);
+        const axesHelper = new AxesHelper(10); // 参数为坐标轴长度，可自行调整
+        this.scene.add(axesHelper)
         this.cube = cube;
         this.render();
 
@@ -59,25 +72,67 @@ class Rubiks {
 
         const ratio = Math.max(2.2 / (winW / coarseSize), 2.2 / (winH / coarseSize));
         this.camera.position.z *= ratio;
-        this._controls.push(
-            new MouseControl(this.camera, this.scene, this.renderer, cube),
-            new TouchControl(this.camera, this.scene, this.renderer, cube)
-        );
+        this.camera.position.x = 5;
+        this.camera.position.y = 5;
+
+        // 拖动会影响魔方，这里是魔方元素在旋转，不是世界坐标系在旋转
+        // this._controls.push(
+        //     new MouseControl(this.camera, this.scene, this.renderer, cube),
+        //     new TouchControl(this.camera, this.scene, this.renderer, cube)
+        // );
         this.presetControls = new PresetControls(this.camera, this.scene, this.renderer, cube);
 
-        this.render();
+        this.animate();
     }
 
 
     /**
      * 打乱
      */
-    public disorder() {
-        if (this.cube) {
-       
+    public async disorder() {
+        if (!this.cube) return;
 
+        // 生成随机打乱公式，比如 ["R", "U2", "F'", "D", ...]
+        // const scramble = generateScramble();
+        const scramble = [
+    "L2",
+    "R'",
+    "F2",
+    "B2",
+    "L",
+    "D2",
+    "B2'",
+    "L",
+    "F'",
+    "R2",
+    "D2",
+    "L2",
+    "B'",
+    "L'",
+    "U",
+    "R2'",
+    "U2'",
+    "R2",
+    "B'",
+    "L",
+    "F2",
+    "L",
+    "F",
+    "R",
+    "F'"];
+        console.log(scramble);
+        console.log("Scramble:", scramble.join(" "));
+
+        // 逐步执行动画（依次 await）
+        for (const move of scramble) {
+            console.log("Step:", move);
+            await this.presetControls.rotateCube(move);  // 每步带动画旋转
+            await new Promise(r => setTimeout(r, 100));  // 每步间隔一点时间
         }
+
+        console.log("✅ 打乱完成");
     }
+
 
     /**
      * 还原
@@ -107,12 +162,25 @@ class Rubiks {
                 const dis = time;
                 this.cube.position.y = Math.sin(dis) * 0.3;
             }
-
+            this.controls.update();
             this.render();
             requestAnimationFrame(animation);
         };
 
         requestAnimationFrame(animation);
+    }
+
+    private animate() {
+        requestAnimationFrame(() => this.animate());
+
+        // 可选：立方体旋转
+        // this.cube.rotation.x += 0.001;
+        // this.cube.rotation.y += 0.01;
+
+        // 更新控制器（必须）
+        this.controls.update();
+
+        this.renderer.render(this.scene, this.camera);
     }
 }
 
