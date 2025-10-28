@@ -6,6 +6,15 @@ import CubeData, {type CubeElement} from "./cubeData";
 import CubeState, {type RotateDirection} from "./cubeState";
 import {createSquare, SquareMesh} from "./square";
 
+enum FaceType {
+    Up = 'U',
+    Down = 'D',
+    Left = 'L',
+    Right = 'R',
+    Front = 'F',
+    Back = 'B',
+}
+
 /**
  * 获取square向里平移0.5的方块大小的位置
  */
@@ -355,6 +364,39 @@ export class Cube extends Group {
      */
     public disorder() {
 
+    }
+
+    /**
+     * 
+     */
+    public getFaces(face: FaceType) {
+        // 根据 face 返回属于该面的所有 SquareMesh。face 为 'U','D','L','R','F','B'
+        let targetNor;
+        switch (face) {
+            case FaceType.Up:
+                targetNor = new Vector3(0, 1, 0);
+                break;
+            case FaceType.Down:
+                targetNor = new Vector3(0, -1, 0);
+                break;
+            case FaceType.Left:
+                targetNor = new Vector3(-1, 0, 0);
+                break;
+            case FaceType.Right:
+                targetNor = new Vector3(1, 0, 0);
+                break;
+            case FaceType.Front:
+                targetNor = new Vector3(0, 0, 1);
+                break;
+            case FaceType.Back:
+                targetNor = new Vector3(0, 0, -1);
+                break;
+            default:
+                return [] as any;
+        }
+
+        // 只匹配与目标法向量一致的 squares
+        return this.squares.filter((square) => square.element.normal.equals(targetNor));
     }
 
     public restore() {

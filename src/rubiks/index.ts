@@ -4,6 +4,7 @@ import createScene from "./components/scene";
 import createRenderer from "./components/renderer";
 import {Cube} from "./core/cube";
 import Control, {MouseControl, TouchControl} from "./core/control";
+import PresetControls from "./core/presetControls";
 
 const setSize = (container: Element, camera: PerspectiveCamera, renderer: WebGLRenderer) => {
     // Set the camera's aspect ratio
@@ -23,6 +24,7 @@ class Rubiks {
     private cube: Cube | undefined;
     private renderer: WebGLRenderer;
     private _controls: Control[] = [];
+    private presetControls: PresetControls;
     public constructor(container: Element) {
         this.camera = createCamera();
         this.scene = createScene("#eeffcc");
@@ -36,7 +38,7 @@ class Rubiks {
         });
         setSize(container, this.camera, this.renderer);
         this.setOrder(3);
-
+        this.presetControls.rotateCube('U')
         // this.startAnimation();
     }
 
@@ -61,16 +63,19 @@ class Rubiks {
             new MouseControl(this.camera, this.scene, this.renderer, cube),
             new TouchControl(this.camera, this.scene, this.renderer, cube)
         );
+        this.presetControls = new PresetControls(this.camera, this.scene, this.renderer, cube);
 
         this.render();
     }
+
 
     /**
      * 打乱
      */
     public disorder() {
         if (this.cube) {
-            // TODO
+       
+
         }
     }
 
