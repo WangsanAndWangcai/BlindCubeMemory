@@ -38,7 +38,7 @@ class Rubiks {
         // 🎯 添加 OrbitControls 控制器
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enableDamping = true; // 惯性阻尼感
-        this.controls.dampingFactor = 0.05;
+        this.controls.dampingFactor = 0.3;
         this.controls.enableZoom = true;    // 启用缩放
         this.controls.enablePan = true;     // 启用平移
         // auto resize
@@ -89,48 +89,18 @@ class Rubiks {
     /**
      * 打乱
      */
-    public async disorder() {
+    public async disorder(scramble: string[]) {
         if (!this.cube) return;
-
-        // 生成随机打乱公式，比如 ["R", "U2", "F'", "D", ...]
-        // const scramble = generateScramble();
-        const scramble = [
-    "L2",
-    "R'",
-    "F2",
-    "B2",
-    "L",
-    "D2",
-    "B2'",
-    "L",
-    "F'",
-    "R2",
-    "D2",
-    "L2",
-    "B'",
-    "L'",
-    "U",
-    "R2'",
-    "U2'",
-    "R2",
-    "B'",
-    "L",
-    "F2",
-    "L",
-    "F",
-    "R",
-    "F'"];
-        console.log(scramble);
-        console.log("Scramble:", scramble.join(" "));
-
-        // 逐步执行动画（依次 await）
         for (const move of scramble) {
             console.log("Step:", move);
             await this.presetControls.rotateCube(move);  // 每步带动画旋转
             await new Promise(r => setTimeout(r, 100));  // 每步间隔一点时间
         }
+        return scramble;
+    }
 
-        console.log("✅ 打乱完成");
+    public getScramble() {
+        return generateScramble();
     }
 
 

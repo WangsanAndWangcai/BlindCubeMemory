@@ -1,29 +1,57 @@
 <template>
   <div class="main-container">
-    <div class="shuffle-code-container">D' F U2 B L' R B' F R' U D2 L2 F B D2 L' U2 F' D2 R'</div>
+    <div class="shuffle-code-container">{{ scramble.join(' ') }}</div>
     <div id="container"></div>
     <div class="input-button-container">
-      <div v-for="j in 8" :key="j" class="button-rows">
-        <div v-for="i in 3" :key="i" class="button-cols">
-          <span>
-            {{ CornerKey[(j-1) * 3 + (i-1)] }}
-          </span>
-        </div>
-      </div>
+      <el-radio-group v-model="curType" size="small">
+        <el-radio-button label="Corner" value="Corner" >
+          <template #default>
+            <div :style="{width: curType=='Corner'?'60px':'40px'}">Corner</div>
+          </template>
+        </el-radio-button>
+        <el-radio-button label="Edge" value="Edge">
+          <template #default>
+            <div :style="{width: curType=='Edge'?'60px':'40px'}">Edge</div>
+          </template>
+        </el-radio-button>
+      </el-radio-group>
+      <el-divider style="margin:5px 0px 5px 0px;"></el-divider>
+      <el-button-group v-for="j in 8" :key="j" class="button-rows">
+        <el-button v-for="i in 3" :key="i" style="width: 50px; background: transparent;">
+          {{ CornerKey[(j-1) * 3 + (i-1)] }}
+        </el-button>
+      </el-button-group>
+
     </div>
     <div class="input-code-container">
-      <div>A1</div>
-      <div>D2</div>
-      <div>F3</div>
-      <div>J4</div>
-      <div>X5</div>
-      <div>P6</div>
-      <div>R7</div>
-      <div>R8</div>
-      <div>R9</div>
+      {{ answer.join(' ') }}
+    </div>
+    <div class="time-container">
+      01:28:00
     </div>
 
-    <div class="start-button" @click="handleShuffle">Start</div>
+    <el-button-group
+      class="start-button"
+    >
+      
+    <el-button
+      @click="console.log('TODO')"
+      type="primary"
+      round
+      v-if="currentState == CurrentState.HANDLING"
+      style="width: 60%;"
+    >
+      Show
+    </el-button>
+    <el-button
+        @click="handleShuffle"
+        type="primary"
+        round
+        :style="{width: currentState == CurrentState.HANDLING?'40%':'100%'}"
+      >
+        {{ mainBtnStr }}
+      </el-button>
+    </el-button-group>
   </div>
   <!-- <Test/> -->
 </template>
@@ -46,10 +74,33 @@ const CornerKey = ref([
   'X','Y','Z',
 ])
 
+enum CurrentState {
+  BEGIN,
+  SHUFFLING,
+  HANDLING,
+  DONE
+}
+
+const answer = ref([])
+const scramble = ref([])
+const mainBtnStr = ref('Shuffle')
+
+const FaceList = ['red', 'green', 'yellow']
+const curType = ref('Corner')
+
+const currentState = ref(CurrentState.BEGIN)
+
+
 function handleShuffle() {
   console.log('btn', rubik);
   if (rubik) {
-    rubik.disorder();
+    scramble.value = rubik.getScramble();
+    mainBtnStr.value = 'Shuffling'
+    currentState.value = CurrentState.SHUFFLING;
+    rubik.disorder(scramble.value).then(()=>{
+      currentState.value = CurrentState.HANDLING;
+      mainBtnStr.value = '放弃';
+    });
   }
 }
 
@@ -76,13 +127,6 @@ onMounted(() => {
     //   }
     // });
   }
-
-
-  // TODO
-  // 1. shuffle
-  // 2. Gen Code
-
-
 })
 </script>
 
@@ -90,7 +134,9 @@ onMounted(() => {
 <style scoped lang="scss">
 .main-container {
   position: relative;
-
+  width: calc(100vw);
+  height: calc(100vh);
+  overflow: hidden;
   .shuffle-code-container {
     position: absolute;
     top: 20px;
@@ -106,8 +152,7 @@ onMounted(() => {
     z-index: 999;
 
     .button-rows {
-      margin: 5px;
-      padding: 5px;
+      margin: 5px 0px;
       display: flex;
       flex-direction: row;
     }
@@ -125,20 +170,30 @@ onMounted(() => {
 
   .start-button {
     position: absolute;
-    bottom: 50px;
+    bottom: 20px;
     left: 40%;
     right: 40%;
-    background-color: gray;
-    width: 50;
     height: 50;
-    border: 1px solid red;
+    opacity: 0.3;
   }
 
   .input-code-container {
     position: absolute;
     left: 5px;
     top: 50px;
+    font-family: 'consolas';
+    color: black;
   }
+  
+  .time-container {
+    position: absolute;
+    left: 15px;
+    bottom: 35px;
+    font-family: 'consolas';
+    color: black;
+    font-size: 28px;
+  }
+  
 }
 
 #container {
@@ -150,5 +205,14 @@ onMounted(() => {
 </style>
 
 <style>
-
+html, body {
+  background-color: #eeffcc;
+  color: white;
+  height: 100%;
+  margin: 0;
+  padding: env(safe-area-inset-top)
+           env(safe-area-inset-right)
+           env(safe-area-inset-bottom)
+           env(safe-area-inset-left);
+}
 </style>
