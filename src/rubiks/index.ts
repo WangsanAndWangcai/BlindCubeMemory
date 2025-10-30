@@ -91,8 +91,8 @@ class Rubiks {
      */
     public async disorder(scramble: string[]) {
         if (!this.cube) return;
+        this.cube.setCodeShow = false;
         for (const move of scramble) {
-            console.log("Step:", move);
             await this.presetControls.rotateCube(move);  // 每步带动画旋转
             await new Promise(r => setTimeout(r, 100));  // 每步间隔一点时间
         }

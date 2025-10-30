@@ -29,8 +29,25 @@ const getTemPos = (square: SquareMesh, squareSize: number) => {
 export class Cube extends Group {
     private data: CubeData;
     public state!: CubeState;
+    private showCode: boolean;
     public get squares() {
         return this.children as SquareMesh[];
+    }
+
+
+    public set setCodeShow(enable: boolean) {
+        this.squares.forEach(v => {
+            const codeMesh = (v as any).codeMesh;
+            if (codeMesh) {
+                codeMesh.visible = enable;
+            }
+        });
+    }
+    
+
+
+    public set setShowCode(showCode:boolean) {
+        this.showCode = showCode; 
     }
 
     /**
@@ -60,7 +77,6 @@ export class Cube extends Group {
         this.data = new CubeData(order);
 
         this.createChildrenByData();
-
         // this.rotateX(Math.PI * 0.25);
         // this.rotateY(Math.PI * 0.25);
         setFinish(this.finish);

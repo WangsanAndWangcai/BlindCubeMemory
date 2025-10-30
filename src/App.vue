@@ -1,5 +1,5 @@
 <template>
-  <div class="main-container">
+  <div class="main-container" :key="refreshKey">
     <div class="shuffle-code-container">{{ scramble.join(' ') }}</div>
     <div id="container"></div>
     <div class="input-button-container">
@@ -17,7 +17,7 @@
       </el-radio-group>
       <el-divider style="margin:5px 0px 5px 0px;"></el-divider>
       <el-button-group v-for="j in 8" :key="j" class="button-rows">
-        <el-button v-for="i in 3" :key="i" style="width: 50px; background: transparent;">
+        <el-button v-for="i in 3" :key="i" style="width: 50px; background: transparent;" @click="()=>{answer.push(CornerKey[(j-1) * 3 + (i-1)])}">
           {{ CornerKey[(j-1) * 3 + (i-1)] }}
         </el-button>
       </el-button-group>
@@ -27,7 +27,7 @@
       {{ answer.join(' ') }}
     </div>
     <div class="time-container">
-      01:28:00
+      <Timer v-model="timeCnt" ref="timerRef" class=""/>
     </div>
 
     <el-button-group
@@ -52,16 +52,22 @@
         {{ mainBtnStr }}
       </el-button>
     </el-button-group>
+
+
   </div>
-  <!-- <Test/> -->
+
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import Rubiks from './rubiks';
 import Test from './threeTest/Test.vue';
+import Timer from './Timer.vue';
+import {ElMessageBox} from 'element-plus'
 
 let rubik: undefined | Rubiks = undefined;
+
+const refreshKey = ref(0)
 
 const CornerKey = ref([
   'A','B','C',
@@ -74,12 +80,17 @@ const CornerKey = ref([
   'X','Y','Z',
 ])
 
-enum CurrentState {
-  BEGIN,
-  SHUFFLING,
-  HANDLING,
-  DONE
-}
+const CurrentState = {
+  BEGIN: 'BEGIN',
+  SHUFFLING: 'SHUFFLING',
+  HANDLING: 'HANDLING',
+  DONE: 'DONE',
+} as const;
+
+type CurrentState = typeof CurrentState[keyof typeof CurrentState];
+
+const timeCnt = ref(0)
+const timerRef = ref<InstanceType<typeof Timer> | null>(null)
 
 const answer = ref([])
 const scramble = ref([])
@@ -88,19 +99,28 @@ const mainBtnStr = ref('Shuffle')
 const FaceList = ['red', 'green', 'yellow']
 const curType = ref('Corner')
 
-const currentState = ref(CurrentState.BEGIN)
+const currentState = ref<CurrentState>(CurrentState.BEGIN)
 
 
 function handleShuffle() {
   console.log('btn', rubik);
   if (rubik) {
-    scramble.value = rubik.getScramble();
-    mainBtnStr.value = 'Shuffling'
-    currentState.value = CurrentState.SHUFFLING;
-    rubik.disorder(scramble.value).then(()=>{
-      currentState.value = CurrentState.HANDLING;
-      mainBtnStr.value = '放弃';
-    });
+    switch (currentState.value) {
+      case CurrentState.BEGIN: {
+        scramble.value = rubik.getScramble();
+        mainBtnStr.value = 'Shuffling'
+        currentState.value = CurrentState.SHUFFLING;
+        rubik.disorder(scramble.value.splice(0, 2)).then(()=>{
+          currentState.value = CurrentState.HANDLING;
+          mainBtnStr.value = 'Done';
+          timerRef.value.start();
+        });
+        break;
+      }
+      case CurrentState.HANDLING: {
+        window.location.reload();
+      }
+    }
   }
 }
 
@@ -191,7 +211,7 @@ onMounted(() => {
     bottom: 35px;
     font-family: 'consolas';
     color: black;
-    font-size: 28px;
+    font-size: 18px;
   }
   
 }

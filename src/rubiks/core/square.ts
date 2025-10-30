@@ -90,6 +90,10 @@ export const createSquare = (color: Color, element: CubeElement) => {
         textPlane.position.set(0, 0, 0.01);
         textPlane.scale.set(0.8, 0.8, 0.8);
         square.add(textPlane);
+
+        (square as any).codeMesh = textPlane
+        textPlane.visible = true;
+
     }
 
 
