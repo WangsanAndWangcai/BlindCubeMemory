@@ -28,7 +28,7 @@ class Rubiks {
     private _controls: Control[] = [];
     private presetControls: PresetControls;
     private controls: OrbitControls;
-
+    private showCode: boolean;
     public constructor(container: Element) {
         this.camera = createCamera();
         this.scene = createScene("#eeffcc");
@@ -50,6 +50,7 @@ class Rubiks {
         this.setOrder(3);
         // this.presetControls.rotateCube('F')
         this.render();
+        this.showCode = true;
         // this.startAnimation();
     }
 
@@ -61,8 +62,8 @@ class Rubiks {
 
         const cube = new Cube(order);
         this.scene.add(cube);
-        const axesHelper = new AxesHelper(10); // 参数为坐标轴长度，可自行调整
-        this.scene.add(axesHelper)
+        // const axesHelper = new AxesHelper(10); // 参数为坐标轴长度，可自行调整
+        // this.scene.add(axesHelper)
         this.cube = cube;
         this.render();
 
@@ -71,7 +72,7 @@ class Rubiks {
         const coarseSize = cube.getCoarseCubeSize(this.camera, {w: winW, h: winH});
 
         const ratio = Math.max(2.2 / (winW / coarseSize), 2.2 / (winH / coarseSize));
-        this.camera.position.z *= ratio;
+        this.camera.position.z *= ratio/2;
         this.camera.position.x = 5;
         this.camera.position.y = 5;
 
@@ -101,6 +102,11 @@ class Rubiks {
 
     public getScramble() {
         return generateScramble();
+    }
+
+    public toggleCodeShow() {
+        this.showCode = !this.showCode
+        this.cube.setCodeShow = this.showCode;
     }
 
 

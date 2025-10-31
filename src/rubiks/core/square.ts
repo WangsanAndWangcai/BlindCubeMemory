@@ -5,8 +5,8 @@ const textureLoader = new TextureLoader();
 
 
 export const createSquare = (color: Color, element: CubeElement) => {
-    console.log(1231231);
-    console.log(JSON.parse(JSON.stringify(element)));
+    // console.log(1231231);
+    // console.log(JSON.parse(JSON.stringify(element)));
     const squareShape = new Shape();
     const x = 0, y = 0;
     // top

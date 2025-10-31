@@ -73,7 +73,7 @@ defineExpose({
 .time-display {
   font-size: 48px;
   font-weight: bold;
-  font-family: consolas;
+  font-family: var(--el-font-family);
   color: #333;
 }
 

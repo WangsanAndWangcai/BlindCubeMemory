@@ -476,7 +476,7 @@ export class Cube extends Group {
     }
 
     public getFaces(face: FaceType) {
-        console.log(this.squares);
+        // console.log(this.squares);
         return this.squares.filter(v=>v.element.locationCode.includes(face.toLowerCase()));
     }
 

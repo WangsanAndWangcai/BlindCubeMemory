@@ -25,7 +25,7 @@ const testSquareScreenPosition = (cube: Cube, square: SquareMesh, camera: Camera
 
     spanEle.style.top = `${y}px`;
     spanEle.style.left = `${x}px`;
-    console.log(x, y);
+    // console.log(x, y);
 
     spanEle.innerText = `1`;
 };
