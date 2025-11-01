@@ -61,6 +61,7 @@ class Rubiks {
         }
 
         const cube = new Cube(order);
+        cube.setCodeShow = true;
         this.scene.add(cube);
         // const axesHelper = new AxesHelper(10); // 参数为坐标轴长度，可自行调整
         // this.scene.add(axesHelper)
@@ -92,10 +93,10 @@ class Rubiks {
      */
     public async disorder(scramble: string[]) {
         if (!this.cube) return;
-        this.cube.setCodeShow = false;
+        this.toggleCodeShow();
         for (const move of scramble) {
-            await this.presetControls.rotateCube(move);  // 每步带动画旋转
-            await new Promise(r => setTimeout(r, 100));  // 每步间隔一点时间
+            await this.presetControls.rotateCube(move, 50);  // 每步带动画旋转
+            await new Promise(r => setTimeout(r, 50));  // 每步间隔一点时间
         }
         return scramble;
     }

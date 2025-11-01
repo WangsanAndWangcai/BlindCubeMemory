@@ -29,7 +29,6 @@ const getTemPos = (square: SquareMesh, squareSize: number) => {
 export class Cube extends Group {
     private data: CubeData;
     public state!: CubeState;
-    private showCode: boolean;
     public get squares() {
         return this.children as SquareMesh[];
     }
@@ -44,11 +43,6 @@ export class Cube extends Group {
         });
     }
     
-
-
-    public set setShowCode(showCode:boolean) {
-        this.showCode = showCode; 
-    }
 
     /**
      * 魔方阶数
@@ -73,7 +67,6 @@ export class Cube extends Group {
 
     public constructor(order = 3) {
         super();
-
         this.data = new CubeData(order);
 
         this.createChildrenByData();

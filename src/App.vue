@@ -18,9 +18,9 @@
     </div>
     <div class="input-code-container">
       <div style="font-weight: bold;">Answer</div>
-      <div v-for="i in Math.floor(answer.length / 9) + 1" :key="i" class="answer-row">
+      <div v-for="i in Math.floor(answer.length / 8) + 1" :key="i" class="answer-row">
         <span :style="{backgroundColor: faceColor[i-1]}" class="color-square"></span>
-        <span v-for="code in answer.slice((i-1)*9, (i-1)*9+9)" class="code-square">{{ code }}</span>
+        <span v-for="code in answer.slice((i-1)*8, (i-1)*8+8)" class="code-square">{{ code }}</span>
       </div>
     </div>
     <div class="time-container">
@@ -135,6 +135,7 @@ function handleShuffle() {
         timerRef.value.stop();
         rightBtnStr.value = 'Reset'
         currentState.value = CurrentState.DONE;
+        rubik.toggleCodeShow();
         break;
       }
       case CurrentState.DONE: {
