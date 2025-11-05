@@ -7,14 +7,16 @@ import CubeState, {type RotateDirection} from "./cubeState";
 import {createSquare, SquareMesh} from "./square";
 import { generateScramble } from "./shuffle";
 
-enum FaceType {
-    Up = 'U',
-    Down = 'D',
-    Left = 'L',
-    Right = 'R',
-    Front = 'F',
-    Back = 'B',
-}
+const FaceType = {
+    Up: 'U',
+    Down: 'D',
+    Left: 'L',
+    Right: 'R',
+    Front: 'F',
+    Back: 'B',
+} as const;
+
+export type FaceType = typeof FaceType[keyof typeof FaceType];
 
 /**
  * 获取square向里平移0.5的方块大小的位置

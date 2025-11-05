@@ -17,7 +17,7 @@
 
     </div>
     <div class="input-code-container">
-      <div style="font-weight: bold;">Answer</div>
+      <div style="font-weight: bold;">Answer:</div>
       <div v-for="i in Math.floor(answer.length / 8) + 1" :key="i" class="answer-row">
         <span :style="{backgroundColor: faceColor[i-1]}" class="color-square"></span>
         <span v-for="code in answer.slice((i-1)*8, (i-1)*8+8)" class="code-square">{{ code }}</span>

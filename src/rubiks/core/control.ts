@@ -54,7 +54,7 @@ abstract class Control {
         const x = (offsetX / this.domElement.clientWidth) * 2 - 1;
         const y = -(offsetY / this.domElement.clientHeight) * 2 + 1;
 
-        this.raycaster.setFromCamera({x, y}, this.camera);
+        this.raycaster.setFromCamera(new Vector2(x, y), this.camera);
 
         let intersectSquares: {
             distance: number;
